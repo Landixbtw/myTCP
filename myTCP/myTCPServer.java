@@ -16,24 +16,38 @@ public class myTCPServer{
         ArrayList<String> list = new ArrayList<>();
         Iterator it = list.iterator();
       while(true) {
+   
         System.out.println("Waiting for Client to connect...");
         Socket connectionSocket = welcomeSocket.accept();
 
         BufferedReader inFromClient = new BufferedReader(
         new InputStreamReader(connectionSocket.getInputStream()));
         
-            String request ;
-        while((request = inFromClient.readLine()) != null) {
+        String request;
+        while((request = inFromClient.readLine()) != null && !request.isEmpty()) {
             System.out.println(request);
             list.add(request.toUpperCase());
         }
+        
+        if(list.get(0).split("\\s+")[0].equals("GET")) {
+            String[] strarray = list.get(0).split("\\s+");
+            for(String l : strarray) {
+                System.out.println(l);
+            }
+            if((strarray[1]) != null) System.out.println("\nFILE: " + strarray[1]);
+
+        }
 
         System.out.println("list.size(): " + list.size());
-        for(int i = 0; i < list.size(); i++) {
-            OutputStream os = connectionSocket.getOutputStream();
-            os.write(list.get(i).getBytes("UTF-8"));
-        }
-            
+
+        OutputStream os = connectionSocket.getOutputStream();
+
+        String response = "HTTP/1.1 200 OK \nContent-Length: 100\nContent-Type: text/html\n\n <HTML> <BODY>Hallo</BODY></HTML>";
+                System.out.println(response);
+        os.write(response.getBytes("UTF-8"));
+        // for(int i = 0; i < list.size(); i++) {
+        //     os.write(list.get(i).getBytes("UTF-8"));
+        // }
         connectionSocket.close();
       }
     } catch (IOException e){
