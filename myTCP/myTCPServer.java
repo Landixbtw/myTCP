@@ -1,7 +1,6 @@
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class myTCPServer{
     public static void main(String args[]){
