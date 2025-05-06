@@ -20,32 +20,30 @@ public class myTCPClient{
               new PrintWriter(clientSocket.getOutputStream(), true);
 
 
+        // TODO: adjustable size array?
+        String[] input = new String[128];
+        String userInput = "";
 
-      //int i = 0;
-      String[] input = new String[128];
-      String userInput = "";
+        int i = 0;
+        while(true) {
+            System.out.print("Type in a line: ");
+            userInput = inFromUser.readLine();
+            if(userInput == null) break;
+            input[i] = userInput;
+            i++;
+        }
 
-      //do {
-      //  System.out.print("Type in a line: ");
-      //userInput = inFromUser.readLine();
-      //input[i++] = userInput;
-      //} while(inFromUser.readLine() != null);
-      for(int i = 0; i < 3; i++) {
-        System.out.print("Type in a line: ");
-        userInput = inFromUser.readLine();
-        input[i] = userInput;
-        System.out.println(input[i]);
-      }
+        for(int j = 0; j < i; j++) {
+            System.out.println("Sending to server ");
+            printToServer.println(input[j]);
+        }
 
-      for(int i = 0; i < 3; i++) {
-        System.out.println("Sending to server ");
-        printToServer.println(input[i]);
-      }
+            clientSocket.shutdownOutput();
+            System.out.println("waiting for response");
+        String response = inFromServer.readLine();
+        System.out.println("Server's response:\n" + response);
 
-      String response = inFromServer.readLine();
-      System.out.println("Server's response:\n" + response);
-
-      clientSocket.close();
+        clientSocket.close();
     } catch (Exception e){e.printStackTrace();}
 
   }
