@@ -40,6 +40,7 @@ public class myTCPServer{
 
                 OutputStream os = connectionSocket.getOutputStream();
 
+                // tcm / html response
                 String response = "HTTP/1.1 200 OK \nContent-Length: 100\nContent-Type: text/html\n\n <HTML> <BODY>Hallo</BODY></HTML>";
                 System.out.println(response);
                 os.write(response.getBytes("UTF-8"));

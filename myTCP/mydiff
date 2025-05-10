@@ -1,0 +1,135 @@
+diff --git a/myTCP/myTCPClient.class b/myTCP/myTCPClient.class
+new file mode 100644
+index 0000000..98c4280
+Binary files /dev/null and b/myTCP/myTCPClient.class differ
+diff --git a/myTCP/myTCPClient.java b/myTCP/myTCPClient.java
+index ea0d6c5..188b456 100644
+--- a/myTCP/myTCPClient.java
++++ b/myTCP/myTCPClient.java
+@@ -3,29 +3,47 @@ import java.net.*;
+ 
+ public class myTCPClient{
+   public static void main(String args[]){
+-    BufferedReader inFromUser = 
+-      new BufferedReader(
+-        new InputStreamReader(System.in));	
++    BufferedReader inFromUser =
++            new BufferedReader(
++                    new InputStreamReader(System.in));
+ 
+-    Integer port = 1444;
++    Integer port = 1446;
+ 
+     try{
+       Socket clientSocket = new Socket("localhost",port);
+-	
+-      BufferedReader inFromServer = 
+-        new BufferedReader(
+-          new InputStreamReader(clientSocket.getInputStream()));
+ 
+-      PrintWriter printToServer = 
+-        new PrintWriter(clientSocket.getOutputStream(), true);
++      BufferedReader inFromServer =
++              new BufferedReader(
++                      new InputStreamReader(clientSocket.getInputStream()));
+ 
+-      System.out.print("Type in a line:\n");
+-      String userinput = inFromUser.readLine();
+-      printToServer.println(userinput);
++      PrintWriter printToServer =
++              new PrintWriter(clientSocket.getOutputStream(), true);
+ 
+-      String response = inFromServer.readLine();
+-      System.out.println("Server's response:\n" + response);
+-      clientSocket.close();
++
++        // TODO: adjustable size array?
++        String[] input = new String[128];
++        String userInput = "";
++
++        int i = 0;
++        while(true) {
++            System.out.print("Type in a line: ");
++            userInput = inFromUser.readLine();
++            if(userInput == null) break;
++            input[i] = userInput;
++            i++;
++        }
++
++        for(int j = 0; j < i; j++) {
++            System.out.println("Sending to server ");
++            printToServer.println(input[j]);
++        }
++
++            clientSocket.shutdownOutput();
++            System.out.println("waiting for response");
++        String response = inFromServer.readLine();
++        System.out.println("Server's response:\n" + response);
++
++        clientSocket.close();
+     } catch (Exception e){e.printStackTrace();}
+ 
+   }
+diff --git a/myTCP/myTCPServer.class b/myTCP/myTCPServer.class
+new file mode 100644
+index 0000000..532ee4e
+Binary files /dev/null and b/myTCP/myTCPServer.class differ
+diff --git a/myTCP/myTCPServer.java b/myTCP/myTCPServer.java
+index db3db0b..2779495 100644
+--- a/myTCP/myTCPServer.java
++++ b/myTCP/myTCPServer.java
+@@ -1,33 +1,43 @@
+ import java.io.*;
+ import java.net.*;
++import java.util.ArrayList;
++import java.util.Iterator;
+ 
+ public class myTCPServer{
+   public static void main(String args[]){
+-    Integer port=1444;		
++    Integer port=1446;
+     try{
+       if (args.length >= 2 && args[0].equals("-port"))
+         port=Integer.parseInt(args[1]);
+ 
+       System.out.println("Listen to Port: " + port);
+       ServerSocket welcomeSocket = new ServerSocket(port);
+-			
++        
++        ArrayList<String> list = new ArrayList<>();
++        Iterator it = list.iterator();
+       while(true) {
+         System.out.println("Waiting for Client to connect...");
+         Socket connectionSocket = welcomeSocket.accept();
+ 
+         BufferedReader inFromClient = new BufferedReader(
+-          new InputStreamReader(connectionSocket.getInputStream()));
+-
+-        String request= inFromClient.readLine();
+-
+-        String output = request.toUpperCase();
+-        OutputStream os = connectionSocket.getOutputStream();
+-        os.write(output.getBytes("UTF-8"));
++        new InputStreamReader(connectionSocket.getInputStream()));
++        
++            String request ;
++        while((request = inFromClient.readLine()) != null) {
++            System.out.println(request);
++            list.add(request.toUpperCase());
++        }
+ 
++        System.out.println("list.size(): " + list.size());
++        for(int i = 0; i < list.size(); i++) {
++            OutputStream os = connectionSocket.getOutputStream();
++            os.write(list.get(i).getBytes("UTF-8"));
++        }
++            
+         connectionSocket.close();
+       }
+     } catch (IOException e){
+-        e.printStackTrace();
+-      }
++      e.printStackTrace();
++    }
+   }
+ }
