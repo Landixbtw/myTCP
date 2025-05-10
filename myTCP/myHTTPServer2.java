@@ -1,3 +1,9 @@
+import java.io.*;
+import java.net.*;
+import java.util.ArrayList;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+
 public class myHTTPServer2 {
 
     public static String htmlToString(String filename) throws IOException {
@@ -142,7 +148,7 @@ public class myHTTPServer2 {
                 //Close connection
                 connectionSocket.close();
             }
-            catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
